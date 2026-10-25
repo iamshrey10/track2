@@ -28,6 +28,7 @@ class MessageKind(str, Enum):
     PROMPT = "PROMPT"
     INFO = "INFO"
     FINAL_PLAN = "FINAL_PLAN"
+    AUDIT = "AUDIT"
 
 
 @dataclass(frozen=True)
