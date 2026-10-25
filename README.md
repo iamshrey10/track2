@@ -1,8 +1,35 @@
 # SwapLoop
 
+**Personal agents that find multi-party swap loops between students, negotiate time and value conflicts, and lock a trade only when everyone says yes. No money.**
+
+![Python](https://img.shields.io/badge/Python-3.11+-3776AB?logo=python&logoColor=white)
+![discord.py](https://img.shields.io/badge/discord.py-2.x-5865F2?logo=discord&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?logo=sqlite&logoColor=white)
+![Tests](https://img.shields.io/badge/tests-138%20passing-brightgreen)
+
+Built by **Brew & Build** for the Cubbie Hackathon, Track 2 (Agent-to-Agent Coordination).
+
+**Demo video:** https://drive.google.com/drive/folders/1MRXci4bLnTz7aVHB0ia66TyiiKegA4YQ?usp=drive_link
+
 SwapLoop is a Discord bot where each student gets a personal agent that finds multi-person item swaps on campus. Your agent talks to other students' agents, works out who can trade with whom, sorts out clashes in time, value and place, and only locks a swap once every person has said yes. No money changes hands.
 
-Built for the Cubbie hackathon, Track 2 (agent-to-agent coordination).
+## Built with
+
+| Area | What we used |
+| --- | --- |
+| Language | Python 3.11+ |
+| Chat layer | discord.py 2.x: slash commands, buttons, channels |
+| Storage | SQLite |
+| Core logic | Graph cycle search for 2-4 way swaps, deterministic conflict checks |
+| Testing | pytest: 138 tests, including an end-to-end demo run |
+
+## What we built
+
+- A loop finder that turns "A needs what B has" into complete swap cycles
+- Three conflict checks: time, value gap and meeting place
+- Accept/Decline confirmation, with release and re-search on a decline
+- A one-person demo mode with four simulated students
+- A terminal version, `python -m swaploop.simulate`, as a backup
 
 ## The problem
 
@@ -133,13 +160,22 @@ swaploop/
   demo.py          the four-student seed
   simulate.py      terminal version of the demo
   discord_app/     slash commands, channels and buttons
-docs/spec/         requirements, design and task list
-tests/
+tests/             unit and end-to-end tests
+docs/design.md     how the pieces fit together
 ```
 
 ## Limits
 
+- The agents are rule-based and deterministic, with no language model. Natural-language input is a possible next step.
 - One server, one campus list (Tempe), loops of up to 4 people.
 - Item matching is by name and a small built-in alias list, not by meaning.
 - Times are weekday and clock time in Phoenix time.
 - `/demo seed` and `/demo reset` clear all data, including real students.
+
+## Team
+
+**Brew & Build**, Arizona State University
+
+Shreyas Revankar, Rohan Waghode, Bhavisha Sondagar and Shravani Kulkarni.
+
+SwapLoop was designed and built by Shreyas Revankar.
