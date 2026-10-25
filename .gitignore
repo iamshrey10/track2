@@ -225,3 +225,7 @@ CLAUDE.md
 
 # macOS
 .DS_Store
+.kiro/
+
+# Local database
+*.db

@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "swaploop"
+version = "0.1.0"
+description = "Multi-party item swap loops for students, coordinated by per-student agents"
+requires-python = ">=3.11"
+dependencies = ["discord.py>=2.3"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[tool.setuptools.packages.find]
+include = ["swaploop*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
