@@ -264,9 +264,11 @@ Negotiation for one new loop:
 - Button labels read "Rohan: Accept" and "Rohan: Decline". `custom_id` encodes
   `loop_id:student_id:answer`, using discord.py dynamic items, so buttons keep
   working after a bot restart.
-- `/demo seed` removes existing simulated students, loads the four seed
-  students, posts listings, and runs `search()`. `/demo reset` clears every
-  table (R14) and posts a confirmation.
+- `/demo seed` runs a full reset first (so labels always start at Agent A),
+  posts the label-to-name key in #demo-console, loads the four seed students,
+  posts listings, and runs `search()`. `/demo reset` clears every table (R14)
+  and posts a confirmation. Loop ids are never reused after a reset, so
+  buttons left over from an earlier run cannot answer a new loop.
 - Backup: `python -m swaploop.simulate` builds an in-memory database, runs the
   same seed with a `ConsoleMessenger` that prints each message and answers
   prompts in the fixed order above. A test asserts the simulator's final

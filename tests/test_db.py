@@ -109,26 +109,6 @@ def test_message_log_round_trip(db):
     assert messages[0].recipient_id == student.id
 
 
-def test_delete_simulated_students_keeps_real_ones_and_frees_their_loops(db):
-    real = db.add_student("Real", discord_id="9")
-    sim = db.add_student("Sim", is_simulated=True)
-    real_have = db.add_have(real.id, "lamp", "desk lamp", "good", 20)
-    real_need = db.add_need(real.id, "book", "calculus textbook")
-    sim_have = db.add_have(sim.id, "book", "calculus textbook", "good", 40)
-    sim_need = db.add_need(sim.id, "lamp", "desk lamp")
-    db.create_loop(
-        [LoopLeg(0, real.id, sim.id, real_have.id, sim_need.id),
-         LoopLeg(1, sim.id, real.id, sim_have.id, real_need.id)],
-        "Thu", 990, "Memorial Union", {},
-    )
-
-    db.delete_simulated_students()
-
-    assert [s.name for s in db.list_students()] == ["Real"]
-    assert db.list_loops() == []
-    assert len(db.list_haves(unreserved_only=True)) == 1
-
-
 def test_reset_all_clears_everything_and_restarts_labels(db):
     _, _, legs = make_pair(db)
     db.create_loop(legs, "Thu", 990, "Memorial Union", {})
@@ -141,3 +121,14 @@ def test_reset_all_clears_everything_and_restarts_labels(db):
     assert db.list_free_windows() == [] and db.list_loops() == []
     assert db.list_messages() == []
     assert db.add_student("New").agent_label == "Agent A"
+
+
+def test_loop_ids_keep_growing_after_a_reset(db):
+    _, _, legs = make_pair(db)
+    first = db.create_loop(legs, "Thu", 990, "Memorial Union", {})
+
+    db.reset_all()
+    _, _, legs = make_pair(db)
+    second = db.create_loop(legs, "Thu", 990, "Memorial Union", {})
+
+    assert second.id > first.id

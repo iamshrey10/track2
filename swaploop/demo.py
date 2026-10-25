@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 
+from swaploop.db import agent_label_for
 from swaploop.engine import SwapEngine
 from swaploop.timeutil import parse_window
 
@@ -26,9 +27,16 @@ SEED_STUDENTS = (
 ANSWER_ORDER = ("Shreyas", "Shravani", "Bhavisha", "Rohan")
 
 
+def demo_key() -> str:
+    """Which agent label belongs to which seeded student (labels start at Agent A after a reset)."""
+    return "\n".join(
+        f"{agent_label_for(number)} = {seed.name}" for number, seed in enumerate(SEED_STUDENTS, 1)
+    )
+
+
 def seed_demo(engine: SwapEngine) -> None:
-    """Load the four simulated students, replacing any earlier simulated ones."""
-    engine.db.delete_simulated_students()
+    """Reset everything, then load the four simulated students."""
+    reset_demo(engine)
     with engine.search_paused():
         students = [
             engine.add_student(seed.name, is_simulated=True, campus=seed.campus)

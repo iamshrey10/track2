@@ -3,6 +3,7 @@
 import os
 from collections.abc import Mapping
 from dataclasses import dataclass
+from pathlib import Path
 
 
 class MissingSettingError(RuntimeError):
@@ -27,6 +28,25 @@ class Settings:
         )
 
 
+def load_env_file(path: str | Path = ".env") -> None:
+    """Copy KEY=VALUE lines from a .env file into the environment.
+
+    Variables already set in the environment win, and blank values are skipped.
+    """
+    env_path = Path(path)
+    if not env_path.is_file():
+        return
+    for line in env_path.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.removeprefix("export ").strip()
+        value = value.strip().strip("\"'")
+        if key and value:
+            os.environ.setdefault(key, value)
+
+
 def load_settings(environ: Mapping[str, str] | None = None) -> Settings:
     env = os.environ if environ is None else environ
 
@@ -45,7 +65,7 @@ def load_settings(environ: Mapping[str, str] | None = None) -> Settings:
     return Settings(
         discord_token=token,
         guild_id=guild_id,
-        db_path=env.get("SWAPLOOP_DB", "swaploop.db"),
-        swap_room_channel=env.get("SWAP_ROOM_CHANNEL", "swap-room"),
-        demo_console_channel=env.get("DEMO_CONSOLE_CHANNEL", "demo-console"),
+        db_path=env.get("SWAPLOOP_DB", "").strip() or "swaploop.db",
+        swap_room_channel=env.get("SWAP_ROOM_CHANNEL", "").strip() or "swap-room",
+        demo_console_channel=env.get("DEMO_CONSOLE_CHANNEL", "").strip() or "demo-console",
     )

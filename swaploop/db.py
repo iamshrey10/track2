@@ -170,28 +170,6 @@ class Database:
         with self._conn:
             self._conn.execute("UPDATE students SET campus = ? WHERE id = ?", (campus, student_id))
 
-    def delete_simulated_students(self) -> None:
-        """Remove simulated students and any loop they were part of."""
-        ids = [row["id"] for row in self._conn.execute(
-            "SELECT id FROM students WHERE is_simulated = 1")]
-        if not ids:
-            return
-        marks = ",".join("?" * len(ids))
-        with self._conn:
-            loop_ids = [row["loop_id"] for row in self._conn.execute(
-                f"SELECT DISTINCT loop_id FROM loop_legs "
-                f"WHERE giver_id IN ({marks}) OR receiver_id IN ({marks})", ids + ids)]
-            for loop_id in loop_ids:
-                self._conn.execute("UPDATE have_items SET loop_id = NULL WHERE loop_id = ?", (loop_id,))
-                self._conn.execute("UPDATE need_items SET loop_id = NULL WHERE loop_id = ?", (loop_id,))
-                self._conn.execute("DELETE FROM confirmations WHERE loop_id = ?", (loop_id,))
-                self._conn.execute("DELETE FROM loop_legs WHERE loop_id = ?", (loop_id,))
-                self._conn.execute("DELETE FROM loops WHERE id = ?", (loop_id,))
-            for table in ("have_items", "need_items", "free_windows", "confirmations", "message_log"):
-                column = "recipient_id" if table == "message_log" else "student_id"
-                self._conn.execute(f"DELETE FROM {table} WHERE {column} IN ({marks})", ids)
-            self._conn.execute(f"DELETE FROM students WHERE id IN ({marks})", ids)
-
     # items and windows
 
     @staticmethod
@@ -418,4 +396,6 @@ class Database:
         with self._conn:
             for table in _TABLES_IN_DELETE_ORDER:
                 self._conn.execute(f"DELETE FROM {table}")
-            self._conn.execute("DELETE FROM sqlite_sequence")
+            # student ids restart so labels begin at Agent A again; loop ids keep growing so
+            # buttons left over from an earlier run can never answer a new loop
+            self._conn.execute("DELETE FROM sqlite_sequence WHERE name != 'loops'")

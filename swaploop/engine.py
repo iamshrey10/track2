@@ -61,6 +61,11 @@ class SwapEngine:
     ) -> Student:
         return self.db.add_student(name, discord_id, is_simulated, campus)
 
+    def student_for_discord(self, discord_id: str, display_name: str) -> Student:
+        return self.db.find_student_by_discord_id(discord_id) or self.add_student(
+            display_name, discord_id=discord_id
+        )
+
     def add_have(self, student_id: int, name: str, condition: str, value_usd: int) -> HaveItem:
         name, condition = name.strip(), condition.strip()
         if not matcher.canonicalize(name):
