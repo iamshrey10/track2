@@ -1,6 +1,6 @@
 # SwapLoop Design
 
-Companion to `requirements.md`. Scope is deliberately small: one guild, one
+Scope is deliberately small: one guild, one
 campus list, 2-4 way loops, deterministic logic, SQLite, no paid APIs.
 
 ## 1. Principles

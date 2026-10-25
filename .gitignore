@@ -219,13 +219,9 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# Local tooling config
-CLAUDE.md
-.claude/
 
 # macOS
 .DS_Store
-.kiro/
 
 # Local database
 *.db
