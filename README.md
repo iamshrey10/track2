@@ -179,3 +179,6 @@ docs/design.md     how the pieces fit together
 Shreyas Revankar, Rohan Waghode, Bhavisha Sondagar and Shravani Kulkarni.
 
 SwapLoop was designed and built by Shreyas Revankar.
+
+- [Portfolio](https://shreyasrevankar.com/)
+- [LinkedIn](https://www.linkedin.com/in/shreyas-revankar-2003s/)
